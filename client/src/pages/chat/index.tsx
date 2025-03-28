@@ -1,32 +1,7 @@
-import { openai } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
-import { streamText } from 'ai';
-
-// Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
-export async function POST(req: Request) {
-  // Extract the `messages` from the body of the request
-  const { messages, id } = await req.json();
-
-  console.log('chat id', id); // can be used for persisting the chat
-
-  // Call the language model
-  const result = streamText({
-    model: openai('gpt-4o'),
-    messages,
-    async onFinish({ text, toolCalls, toolResults, usage, finishReason }) {
-      // implement your own logic here, e.g. for storing messages
-      // or recording token usage
-    },
-  });
-
-  // Respond with the stream
-  return result.toDataStreamResponse();
-}
-
 export default function ChatPage() {
-  debugger;
   const {
     error,
     input,
@@ -37,6 +12,7 @@ export default function ChatPage() {
     reload,
     stop,
   } = useChat({
+    api: `${import.meta.env.BIZ_SERVER_URL}/llm/chat`,
     onFinish(message, { usage, finishReason }) {
       console.log('Usage', usage);
       console.log('FinishReason', finishReason);

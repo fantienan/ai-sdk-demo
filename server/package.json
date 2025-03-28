@@ -13,13 +13,13 @@
     "dstc": "tsx  src/stream-text/deepseek-tool-call.ts"
   },
   "dependencies": {
-    "@ai-sdk/deepseek": "^0.2.1",
-    "@ai-sdk/openai": "^1.3.2",
+    "@ai-sdk/deepseek": "^0.2.2",
+    "@ai-sdk/openai": "^1.3.3",
     "@fastify/cors": "^11.0.0",
     "@fastify/postgres": "^6.0.2",
     "@types/pg": "^8.11.11",
-    "ai": "^4.2.5",
-    "better-sqlite3": "^11.9.0",
+    "ai": "^4.2.6",
+    "better-sqlite3": "^11.9.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "fastify": "^5.2.1",

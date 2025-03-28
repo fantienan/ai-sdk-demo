@@ -4,7 +4,7 @@ import type { BizConfig } from './types.ts';
 
 const { NODE_ENV = 'local' } = process.env;
 const envPath = path.resolve(process.cwd(), '..');
-debugger;
+
 configDotenv({
   path: [path.join(envPath, '.env.local'), path.join(envPath, `.env.${NODE_ENV}`), path.join(envPath, '.env')],
 });
@@ -25,9 +25,18 @@ const config: BizConfig = {
     origin: '*',
   },
   llm: {
-    apiKey: process.env.BIZ_LLM_API_KEY!,
-    baseUrl: process.env.BIZ_LLM_BASE_URL!,
-    model: process.env.BIZ_LLM_MODEL!,
+    deepseek: {
+      apiKey: process.env.BIZ_LLM_API_KEY!,
+      baseUrl: process.env.BIZ_LLM_BASE_URL!,
+      model: process.env.BIZ_LLM_MODEL!,
+    },
+  },
+  routes: {
+    root: '/api/v1',
+    llm: {
+      prefix: '/llm',
+      chat: '/chat',
+    },
   },
 };
 

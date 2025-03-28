@@ -10,11 +10,21 @@ export type BizConfig = {
   cors: NonNullable<FastifyCorsOptions> | FastifyCorsOptionsDelegate;
 
   llm: {
-    apiKey: string;
-    baseUrl: string;
-    model: string;
+    deepseek: {
+      apiKey: string;
+      baseUrl: string;
+      model: string;
+    };
   };
   tianditu: {
     apiKey: string;
+  };
+  routes: {
+    root: string;
+
+    llm: {
+      prefix: string;
+      chat: string;
+    };
   };
 };

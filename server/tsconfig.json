@@ -22,7 +22,7 @@
     "noUncheckedSideEffectImports": true
   },
   "files": [
-    "src/types.d.ts",
+    "src/global.d.ts",
   ],
   "include": [
     "src/**/*"

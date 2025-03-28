@@ -1,53 +1,32 @@
 import { serializerCompiler, validatorCompiler } from 'fastify-zod-openapi';
-import { deepseek } from '@ai-sdk/deepseek';
-import { createDataStream, streamText } from 'ai';
 import Fastify from 'fastify';
 import { config } from './config/index.ts';
+import { errors, Result, sqlite, BaseAgent } from './decorates/index.ts';
 
-const model = deepseek(config.llm.model);
-const fastify = Fastify({ logger: true });
-fastify.setValidatorCompiler(validatorCompiler);
-fastify.setSerializerCompiler(serializerCompiler);
-fastify.decorate('bizConfig', config).register(import('@fastify/cors'), config.cors);
+async function main() {
+  const fastify = Fastify({ logger: true });
+  fastify.setValidatorCompiler(validatorCompiler);
+  fastify.setSerializerCompiler(serializerCompiler);
+  fastify
+    .decorate('bizAppConfig', config)
+    .decorate('bizError', errors)
+    .decorate('BizResult', Result)
+    .decorate('bizSqlite', sqlite)
+    .decorate('bizBaseAgent', new BaseAgent())
+    .register(import('@fastify/cors'), config.cors)
+    .after(() => {
+      console.log(config);
+      fastify
+        .get('/ping', () => ({ pong: 'it work' }))
+        .register(import('./controllers/index.ts'), {
+          prefix: config.routes.root,
+        });
+    });
 
-fastify.post('/', async function (request, reply) {
-  const result = streamText({
-    model,
-    prompt: '你好',
-  });
+  await fastify.listen({ port: config.service.port, host: config.service.host });
+}
 
-  // Mark the response as a v1 data stream:
-  reply.header('X-Vercel-AI-Data-Stream', 'v1');
-  reply.header('Content-Type', 'text/plain; charset=utf-8');
-
-  return reply.send(result.toDataStream());
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
 });
-
-fastify.post('/stream-data', async function (request, reply) {
-  // immediately start streaming the response
-  const dataStream = createDataStream({
-    execute: async (dataStreamWriter) => {
-      dataStreamWriter.writeData('initialized call');
-
-      const result = streamText({
-        model,
-        prompt: '你好',
-      });
-
-      result.mergeIntoDataStream(dataStreamWriter);
-    },
-    onError: (error) => {
-      // Error messages are masked by default for security reasons.
-      // If you want to expose the error message to the client, you can do so here:
-      return error instanceof Error ? error.message : String(error);
-    },
-  });
-
-  // Mark the response as a v1 data stream:
-  reply.header('X-Vercel-AI-Data-Stream', 'v1');
-  reply.header('Content-Type', 'text/plain; charset=utf-8');
-
-  return reply.send(dataStream);
-});
-
-fastify.listen({ port: 8080 });
