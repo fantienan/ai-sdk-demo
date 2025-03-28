@@ -15,6 +15,10 @@ export class Result {
    */
   static SYS_ERROR = 40000;
   /**
+   * @description 30000-39999 ai 异常
+   */
+  static AI_ERROR = 30000;
+  /**
    * @description 50000 未知异常
    */
   static UN_ERROR = 50000;
@@ -56,6 +60,7 @@ export class Result {
       [Result.UN_ERROR]: '未知异常',
       [Result.BIZ_ERROR]: '基本的业务异常',
       [Result.VALIDATE_ERROR]: '参数校验异常',
+      [Result.AI_ERROR]: 'AI 异常',
     };
     return message[code] || '未知异常';
   }

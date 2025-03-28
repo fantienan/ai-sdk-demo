@@ -15,7 +15,6 @@ async function main() {
     .decorate('bizBaseAgent', new BaseAgent())
     .register(import('@fastify/cors'), config.cors)
     .after(() => {
-      console.log(config);
       fastify
         .get('/ping', () => ({ pong: 'it work' }))
         .register(import('./controllers/index.ts'), {

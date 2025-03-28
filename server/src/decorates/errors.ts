@@ -1,3 +1,5 @@
+import { Result } from './result.ts';
+
 export class BizError extends Error {
   constructor(
     message: string,
@@ -61,6 +63,13 @@ export class BizServerError extends BizError {
   }
 }
 
+export class BizAiError extends BizError {
+  constructor(message: string, response: unknown) {
+    super(message, Result.AI_ERROR, response);
+    this.name = 'BizAiError';
+  }
+}
+
 export function isBizError(error: unknown): error is BizError {
   return error instanceof BizError;
 }
@@ -81,6 +90,8 @@ export function createBizError(status: number, response: any): BizError {
       return new BizRateLimitError(response?.message, new Date(response?.reset_at || Date.now() + 60000));
     case 500:
       return new BizServerError(response?.message);
+    case Result.AI_ERROR:
+      return new BizAiError(response?.message || 'AI error', response);
     default:
       return new BizError(response?.message || 'Biz API error', status, response);
   }

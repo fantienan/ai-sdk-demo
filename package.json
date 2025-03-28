@@ -15,6 +15,7 @@
     "prettier-plugin-packagejson": "^2.5.10"
   },
   "dependencies": {
+    "ai-sdk-demo": "file:",
     "typescript-eslint": "^8.28.0"
   }
 }

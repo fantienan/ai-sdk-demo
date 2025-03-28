@@ -5,18 +5,7 @@ import type { FastifyZodOpenApiTypeProvider } from 'fastify-zod-openapi';
 
 const llmChatSchema = z.object({
   id: z.string(),
-  messages: z.array(
-    z.object({
-      role: z.enum(['user', 'assistant']),
-      content: z.string(),
-      parts: z.array(
-        z.object({
-          type: z.string(),
-          text: z.string(),
-        }),
-      ),
-    }),
-  ),
+  messages: z.any({ description: '消息列表' }),
 });
 
 export default async function (fastify: FastifyInstance) {
@@ -31,7 +20,7 @@ export default async function (fastify: FastifyInstance) {
       },
     },
     async function (request, reply) {
-      const result = streamText({ model, messages: request.body.messages, tools: agent.tools });
+      const result = streamText({ model, messages: request.body.messages, tools: agent.tools, maxSteps: 2 });
       reply.header('Content-Type', 'text/plain; charset=utf-8');
       return reply.send(result.toDataStream());
     },
